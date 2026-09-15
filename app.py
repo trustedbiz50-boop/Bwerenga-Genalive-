@@ -130,8 +130,8 @@ def get_member(member_id):
     conn.close()
     return dict(row) if row else None
 
+init_db() #rubs on import, so gunicorn triggers it too
 if __name__ == "__main__":
-    init_db()
     # === CHANGED: was app.run(debug=True) — unsafe and unreachable on Render ===
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
