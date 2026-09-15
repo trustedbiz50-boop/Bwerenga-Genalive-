@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered! — GenAlive Bwerenga Campus Connect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <main class="page">
+        <div class="success-card">
+            {% if full_name %}
+                <h1>Thank You For Registering, {{ full_name }}!</h1>
+            {% else %}
+                <h1>You're All Set!</h1>
+            {% endif %}
+            <p>We are excited to celebrate your birthday with you.</p>
+            <a class="button" href="/">Back to Register</a>
+        </div>
+    </main>
+
+    {% include "partials/footer.html" %}
+
+    <!-- The confetti script runs itself as soon as the page loads —
+         see static/js/confetti.js for how it works, step by step. -->
+    <script src="{{ url_for('static', filename='js/confetti.js') }}"></script>
+</body>
+</html>

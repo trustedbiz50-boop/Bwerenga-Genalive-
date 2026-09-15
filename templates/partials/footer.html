@@ -1,0 +1,14 @@
+<!--
+  This is a "partial" — a small piece of HTML meant to be reused
+  across many pages instead of copy-pasted into each one.
+
+  Flask/Jinja lets us pull it into any template with one line:
+    
+
+  If we ever need to change the footer (new tagline, new year,
+  new logo), we only edit it here — every page updates at once.
+-->
+<footer>
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="GenAlive Bwerenga Campus logo">
+    <p>&copy; 2026 GenAlive Bwerenga Campus Connect</p>
+</footer>
