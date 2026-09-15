@@ -1,0 +1,460 @@
+/* =========================================================
+   GENALIVE BWERENGA CAMPUS CONNECT — SHARED STYLESHEET
+   =========================================================
+   This one file styles all four pages (register, success,
+   dashboard, celebrate). Colors are pulled from the logo:
+     - two greens from the leaves
+     - a maroon and an orange from the "GenAlive Bwerenga Campus" text
+   Using CSS variables means if the color scheme ever changes,
+   we only edit it in ONE place (right here) instead of hunting
+   through every page.
+   ========================================================= */
+
+/* Warm, rounded display font for headings only — pulled in here so
+   celebrate.html and every other page don't need any <link> changes.
+   Body text stays on the original system font for easy reading. */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&display=swap');
+
+:root {
+  --green-dark: #85940c;
+  --green-light: #d1d44f;
+  --maroon: #8b3a2f;
+  --orange: #e2792a;
+  --cream: #fdfcf7;      /* page background — warm, not stark white */
+  --text: #333333;
+  --text-light: #6b6b6b;
+  --border: #e6e3d6;
+  --radius: 10px;        /* used everywhere so corners match */
+}
+
+/* Reset a few browser defaults so every browser starts the same */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: radial-gradient(circle at 50% 0%, #fdfcf5 0%, var(--cream) 45%, #f5f1e2 100%);
+  color: var(--text);
+  line-height: 1.5;
+  /* Stretch the page to at least full height so the footer sits
+     at the bottom even on short pages, instead of floating
+     halfway up the screen. */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------------------------------
+   PAGE WRAPPER
+   Every page's main content sits inside .page so it stays a
+   comfortable width and is centered, instead of stretching
+   edge-to-edge on wide screens.
+   --------------------------------------------------------- */
+.page {
+  flex: 1;                 /* pushes footer down */
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+/* Dashboard has a table, so it gets more breathing room */
+.page.wide {
+  max-width: 800px;
+}
+
+h1 {
+  font-family: 'Baloo 2', -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-bottom: 8px;
+  letter-spacing: 0.2px;
+}
+
+p {
+  color: var(--text-light);
+}
+
+/* ---------------------------------------------------------
+   FORM (register.html)
+   --------------------------------------------------------- */
+form {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  display: block;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="date"],
+input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  background: #fff;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--green-dark);
+}
+
+/* Checkbox row: keep the box and its label side by side */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.checkbox-row input {
+  width: auto;
+}
+.checkbox-row label {
+  margin: 0;
+  font-weight: normal;
+}
+
+button,
+.button {
+  background: var(--green-dark);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+  transition: background 0.15s ease;
+}
+
+button:hover,
+.button:hover {
+  background: #6d7a09;
+}
+
+/* ---------------------------------------------------------
+   DASHBOARD TABLE
+   --------------------------------------------------------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+th {
+  background: var(--green-dark);
+  color: #fff;
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+}
+
+td {
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+tr:hover td {
+  background: #faf9f1;
+}
+
+/* ---------------------------------------------------------
+   CELEBRATE PAGE
+   --------------------------------------------------------- */
+.celebrate-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(139, 58, 47, 0.06), 0 14px 32px rgba(139, 58, 47, 0.1);
+  border-top: none;
+  /* Gradient ribbon across the top, in place of the old flat orange border */
+  background-image: linear-gradient(90deg, var(--orange), var(--maroon), var(--green-dark));
+  background-repeat: no-repeat;
+  background-size: 100% 6px;
+  background-position: top;
+  position: relative;
+  z-index: 2;
+  /* Card "arrives" on page load instead of just appearing */
+  animation: cardEntrance 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Soft decorative flourishes tucked in the top corners — pure CSS,
+   no images, no new HTML elements. Faint enough not to compete
+   with the photo or the name. */
+.celebrate-card::before,
+.celebrate-card::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--green-light) 0%, transparent 70%);
+  opacity: 0.35;
+  z-index: -1;
+  pointer-events: none;
+}
+.celebrate-card::before { left: -24px; }
+.celebrate-card::after  { right: -24px; background: radial-gradient(circle, var(--orange) 0%, transparent 70%); }
+
+.celebrate-card h1 {
+  font-size: 1.9rem;
+  animation: headingReveal 0.6s ease-out 0.25s both;
+}
+
+/* A small celebratory mark above the name, in the ribbon colors */
+.celebrate-card h1::before {
+  content: "🎉";
+  display: block;
+  font-size: 1.6rem;
+  margin-bottom: 6px;
+  animation: fadeInUp 0.5s ease-out 0.15s both;
+}
+
+.celebrate-card img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--green-light);
+  position: relative;
+  z-index: 2;
+  /* Pops in slightly after the card, then glows gently forever */
+  animation:
+    photoPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.45s both,
+    photoGlow 2.4s ease-in-out 1s infinite;
+}
+
+/* This wrapper is added around the photo automatically by balloons.js —
+   it's what gives the burst rings and sparkles something to sit behind/
+   around, without touching celebrate.html at all. */
+.photo-burst-wrap {
+  position: relative;
+  width: 253px;
+  height: 300px;
+  margin: 12px auto;
+}
+
+/* Soft expanding rings that loop forever, like gentle birthday shockwaves */
+.photo-burst-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid var(--orange);
+  transform: translate(-50%, -50%) scale(0.9);
+  opacity: 0.8;
+  z-index: 1;
+  pointer-events: none;
+  animation: burstRing 2.4s ease-out infinite;
+}
+
+@keyframes burstRing {
+  0%   { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(1.9); opacity: 0; }
+}
+
+/* One-time sparks that shoot outward from the photo when the page opens,
+   like a small firework — spawned and removed by balloons.js */
+.photo-sparkle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  z-index: 3;
+  pointer-events: none;
+  animation: sparkleBurst 0.9s ease-out forwards;
+}
+
+@keyframes sparkleBurst {
+  0%   { transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--distance)) scale(0); opacity: 0; }
+}
+
+/* ---------------------------------------------------------
+   REDUCED MOTION — some people turn this on system-wide
+   (Windows, macOS, iOS, Android all have this setting)
+   because fast/continuous motion causes discomfort or
+   dizziness. When it's on, we keep the page feeling warm
+   and celebratory but drop anything fast, looping, or
+   moving across the screen.
+   --------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .celebrate-card {
+    animation: fadeInUp 0.4s ease-out both;
+  }
+  .celebrate-card h1,
+  .celebrate-card h1::before,
+  .celebrate-card p,
+  .celebrate-card .button {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .celebrate-card img {
+    animation: none; /* no pop-in, no pulsing glow */
+  }
+  .photo-burst-ring,
+  .photo-sparkle {
+    display: none; /* no rings, no sparkles */
+  }
+  .celebrate-card .button:hover,
+  .celebrate-card .button:active {
+    transform: none;
+  }
+}
+
+.celebrate-card h1 {
+  animation: headingReveal 0.6s ease-out 0.25s both;
+}
+
+.celebrate-card p {
+  animation: fadeInUp 0.5s ease-out 0.55s both;
+}
+
+/* First <p> is the "Born on ..." line — give it a small badge/pill look
+   instead of plain text, with a cake icon */
+.celebrate-card p:first-of-type {
+  display: inline-block;
+  background: #faf6e8;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--maroon);
+  margin: 4px 0 16px;
+}
+.celebrate-card p:first-of-type::before {
+  content: "🎂 ";
+}
+
+/* Second <p> is the prayer/well-wishes message — warmer, quote-like
+   treatment so it reads as a heartfelt line rather than plain body text */
+.celebrate-card p:nth-of-type(2) {
+  font-style: italic;
+  font-size: 0.98rem;
+  color: var(--text);
+  line-height: 1.6;
+  animation-delay: 0.7s;
+}
+
+.celebrate-card .button {
+  animation: fadeInUp 0.5s ease-out 0.85s both;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background: linear-gradient(90deg, var(--green-dark), #6d7a09);
+  border-radius: 999px;
+  padding: 12px 28px;
+  box-shadow: 0 4px 10px rgba(133, 148, 12, 0.35);
+}
+.celebrate-card .button::before {
+  content: "🏠 ";
+}
+
+.celebrate-card .button:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 14px rgba(133, 148, 12, 0.45);
+}
+
+.celebrate-card .button:active {
+  transform: translateY(0) scale(0.97);
+}
+
+@keyframes cardEntrance {
+  0%   { opacity: 0; transform: translateY(24px) scale(0.92); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes headingReveal {
+  0%   { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes photoPopIn {
+  0%   { opacity: 0; transform: scale(0.6); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes photoGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(226, 121, 42, 0); }
+  50%      { box-shadow: 0 0 22px 8px rgba(226, 121, 42, 0.45); }
+}
+
+/* ---------------------------------------------------------
+   SUCCESS PAGE
+   --------------------------------------------------------- */
+.success-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 28px;
+  text-align: center;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+}
+
+.success-card h1 {
+  color: var(--maroon);
+}
+
+/* ---------------------------------------------------------
+   FOOTER (shared across every page — see partials/footer.html)
+   --------------------------------------------------------- */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 20px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+footer img {
+  width: 90px;
+  height: auto;
+  display: block;
+  margin: 0 auto 8px;
+}
+
+footer p {
+  font-size: 0.8rem;
+  margin: 0;
+  color: var(--text-light);
+}
+
+/* Small helper so links inherit our brand colors instead of
+   default browser blue/purple */
+a {
+  color: var(--maroon);
+}
+a:hover {
+  color: var(--orange);
+}
