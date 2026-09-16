@@ -1,9 +1,27 @@
 document.addEventListener("DOMContentLoaded", function () {
   const wallList = document.getElementById("wall-list");
   const wallForm = document.getElementById("wall-form");
+  const postOverlay = document.getElementById("post-overlay");
+  const openPostBtn = document.getElementById("open-post");
+  const closePostBtn = document.getElementById("close-post");
   let offset = wallList.children.length;
   let loading = false;
   let noMorePosts = false;
+
+  // === Post popup — opens/closes the "Share on the Wall" box ===
+  function openPostPopup() {
+    postOverlay.classList.remove("hidden");
+    wallForm.querySelector("textarea").focus();
+  }
+  function closePostPopup() {
+    postOverlay.classList.add("hidden");
+  }
+  openPostBtn.addEventListener("click", openPostPopup);
+  closePostBtn.addEventListener("click", closePostPopup);
+  // Tapping the dark overlay outside the popup box also closes it
+  postOverlay.addEventListener("click", function (e) {
+    if (e.target === postOverlay) closePostPopup();
+  });
 
   function createPostCard(post) {
     const card = document.createElement("div");
@@ -69,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
         wallList.insertBefore(createPostCard(post), wallList.firstChild);
         offset += 1;
         wallForm.reset();
+        closePostPopup();
       });
   });
 });
