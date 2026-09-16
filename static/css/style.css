@@ -489,14 +489,58 @@ a:hover {
 }
 
 /* ---------------------------------------------------------
+   APP HEADER — "Genalive" title + menu icon
+   --------------------------------------------------------- */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 20px 0;
+}
+.app-header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+.menu-button {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--green-dark);
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+/* Section headers with a link on the right ("See all" / "Post") */
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.section-header h2 { margin: 0; }
+.see-all {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--maroon);
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0;
+}
+.see-all:hover { color: var(--orange); }
+
+/* ---------------------------------------------------------
    HOME PAGE — CELEBRATING THIS MONTH
    --------------------------------------------------------- */
 .home-page .celebrating h2,
+.life-page .celebrating h2,
 .wall-header h2 {
   font-family: 'Baloo 2', -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 1.15rem;
   color: var(--green-dark);
-  margin-bottom: 12px;
 }
 .celebrating-list {
   display: flex;
@@ -519,6 +563,25 @@ a:hover {
   display: block;
   margin: 0 auto 6px;
 }
+/* Fallback circle when a member has no photo — shows their initials
+   instead, colored so different people are easy to tell apart at a
+   glance, same as the reference screenshot. */
+.celebrating-initials {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 6px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-family: 'Baloo 2', -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+.celebrating-item:nth-child(3n+1) .celebrating-initials { background: var(--green-dark); }
+.celebrating-item:nth-child(3n+2) .celebrating-initials { background: var(--maroon); }
+.celebrating-item:nth-child(3n+3) .celebrating-initials { background: var(--orange); }
 .celebrating-item p {
   font-size: 0.75rem;
   font-weight: 600;
@@ -527,8 +590,19 @@ a:hover {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.celebrating-item span {
-  font-size: 0.7rem;
+.celebrating-date {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.celebrating-weekday {
+  font-size: 0.65rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.celebrating-day {
+  font-size: 0.75rem;
   color: var(--orange);
   font-weight: 700;
 }
@@ -537,26 +611,6 @@ a:hover {
    HOME PAGE — PRAYER WALL
    --------------------------------------------------------- */
 .wall { margin-top: 32px; }
-.wall-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-.wall-form textarea,
-.wall-form input[type="text"] {
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-family: inherit;
-  font-size: 0.95rem;
-}
-.wall-form textarea { resize: vertical; min-height: 60px; }
-.wall-form textarea:focus,
-.wall-form input:focus {
-  outline: none;
-  border-color: var(--green-dark);
-}
 .wall-list { display: flex; flex-direction: column; gap: 12px; }
 .wall-post {
   background: #fff;
@@ -581,3 +635,64 @@ a:hover {
 }
 .pray-button:hover { background: #faf6e8; }
 .pray-button:active { transform: scale(0.95); }
+
+/* ---------------------------------------------------------
+   POST POPUP — the "Share on the Wall" overlay
+   --------------------------------------------------------- */
+.post-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+}
+.post-overlay.hidden { display: none; }
+.post-popup {
+  background: #fff;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 18px 18px 0 0;
+  padding: 20px;
+  animation: fadeInUp 0.25s ease-out both;
+}
+.post-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.post-popup-header h3 {
+  margin: 0;
+  font-family: 'Baloo 2', -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--green-dark);
+  font-size: 1.1rem;
+}
+.close-post {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--text-light);
+  cursor: pointer;
+}
+.wall-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.wall-form textarea,
+.wall-form input[type="text"] {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+.wall-form textarea { resize: vertical; min-height: 80px; }
+.wall-form textarea:focus,
+.wall-form input:focus {
+  outline: none;
+  border-color: var(--green-dark);
+}
