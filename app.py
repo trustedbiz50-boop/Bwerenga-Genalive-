@@ -9,6 +9,7 @@ load_dotenv(
 # === NEW: needed for Cloudinary photo uploads ===
 import os
 import uuid
+from datetime import datetime
 import cloudinary
 import cloudinary.uploader
 import requests
@@ -118,9 +119,9 @@ def wall_new():
     author_name = data.get("author_name", "").strip() or None
     if not message:
         return jsonify({"error": "message required"}), 400
-        save_wall_post(message, author_name)
-        newest = load_wall_posts(limit=1, offset=0)
-        return jsonify(newest[0])
+    save_wall_post(message, author_name)
+    newest = load_wall_posts(limit=1, offset=0)
+    return jsonify(newest[0])
 
 #SQlite Database#--------------------------
 import sqlite3
@@ -145,6 +146,30 @@ def init_db():
     if "photo" not in existing_cols:
         conn.execute("ALTER TABLE members ADD COLUMN photo TEXT")
     # === END NEW ===
+
+    # === NEW: home page tables — events (for the "Next event" banner)
+    # and wall_posts (for the prayer wall) ===
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            event_date TEXT NOT NULL,
+            event_time TEXT,
+            location TEXT,
+            poster TEXT
+        )
+    """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS wall_posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            message TEXT NOT NULL,
+            author_name TEXT,
+            created_at TEXT NOT NULL,
+            prayer_count INTEGER NOT NULL DEFAULT 0
+        )
+    """)
+    # === END NEW ===
+
     conn.commit()
     conn.close()
 
@@ -152,8 +177,8 @@ def save_member(full_name, phone_number, location, birthday, share_birthday, pho
     # === CHANGED: added photo=None parameter above, and photo column below ===
     conn = sqlite3.connect(DB_FILE)
     conn.execute(
-        "INSERT INTO members (full_name, phone_number, location, birthday, share_birthday, photo) VALUES (?, ?, ?, ?, ?)",
-        (full_name, phone_number, birthday, int(share_birthday), photo)
+        "INSERT INTO members (full_name, phone_number, location, birthday, share_birthday, photo) VALUES (?, ?, ?, ?, ?, ?)",
+        (full_name, phone_number, location, birthday, int(share_birthday), photo)
     )
     conn.commit()
     conn.close()
@@ -172,8 +197,88 @@ def get_member(member_id):
     conn.close()
     return dict(row) if row else None
 
+# === NEW: home page helpers ===
+
+def load_members_this_month():
+    """Members whose birthday falls in the current calendar month,
+    ordered so the earliest day comes first. share_birthday must be
+    on and we need a photo to show a circle for them."""
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    current_month = datetime.now().strftime("%m")  # e.g. "09"
+    rows = conn.execute(
+        """
+        SELECT * FROM members
+        WHERE share_birthday = 1
+          AND photo IS NOT NULL
+          AND strftime('%m', birthday) = ?
+        ORDER BY strftime('%d', birthday)
+        """,
+        (current_month,)
+    ).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+def save_event(title, event_date, event_time=None, location=None, poster=None):
+    conn = sqlite3.connect(DB_FILE)
+    conn.execute(
+        "INSERT INTO events (title, event_date, event_time, location, poster) VALUES (?, ?, ?, ?, ?)",
+        (title, event_date, event_time, location, poster)
+    )
+    conn.commit()
+    conn.close()
+
+def load_next_event():
+    """The soonest event that hasn't happened yet, or None if there isn't one."""
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    today = datetime.now().strftime("%Y-%m-%d")
+    row = conn.execute(
+        """
+        SELECT * FROM events
+        WHERE event_date >= ?
+        ORDER BY event_date, event_time
+        LIMIT 1
+        """,
+        (today,)
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def save_wall_post(message, author_name=None):
+    conn = sqlite3.connect(DB_FILE)
+    conn.execute(
+        "INSERT INTO wall_posts (message, author_name, created_at, prayer_count) VALUES (?, ?, ?, 0)",
+        (message, author_name, datetime.now().isoformat())
+    )
+    conn.commit()
+    conn.close()
+
+def load_wall_posts(limit=3, offset=0):
+    """Newest posts first, a batch at a time — offset=0 gets the first
+    3, offset=3 gets the next 3, and so on, for the scrolling feed."""
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(
+        "SELECT * FROM wall_posts ORDER BY created_at DESC LIMIT ? OFFSET ?",
+        (limit, offset)
+    ).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+def add_prayer(post_id):
+    """Bumps the prayer count by 1 when someone taps 'pray for this'."""
+    conn = sqlite3.connect(DB_FILE)
+    conn.execute(
+        "UPDATE wall_posts SET prayer_count = prayer_count + 1 WHERE id = ?",
+        (post_id,)
+    )
+    conn.commit()
+    conn.close()
+# === END NEW ===
+
+init_db()  # runs on import, so gunicorn triggers it too, not just __main__
 if __name__ == "__main__":
-    init_db()
     # === CHANGED: was app.run(debug=True) — unsafe and unreachable on Render ===
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
