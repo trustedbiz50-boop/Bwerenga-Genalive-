@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home . GenAlive Bwerenga Campus Connect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <main class="page life-page">
+
+        {% if next_event %}
+        <section class="next-event">
+            <p class="next-event-label">Next event</p>
+            <h2>{{ next_event.title }}</h2>
+            <p class="next-event-time">{{ next_event.event_date }} · {{ next_event.event_time }}</p>
+            {% if next_event.location %}
+            <p class="next-event-location">{{ next_event.location }}</p>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <section class="celebrating">
+            <h2>Celebrating this month</h2>
+            <div class="celebrating-list">
+                {% for member in members %}
+                <div class="celebrating-item">
+                    <img src="{{ member.photo }}" alt="{{ member.full_name }}">
+                    <p>{{ member.full_name }}</p>
+                    <span>{{ member.birthday[8:10] }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="wall">
+            <div class="wall-header">
+                <h2>Wall</h2>
+            </div>
+
+            <form id="wall-form" class="wall-form">
+                <textarea name="message" placeholder="Share a prayer request or a thought..." required></textarea>
+                <input type="text" name="author_name" placeholder="Your name (optional)">
+                <button type="submit">Post</button>
+            </form>
+
+            <div id="wall-list" class="wall-list">
+                {% for post in wall_posts %}
+                <div class="wall-post" data-id="{{ post.id }}">
+                    <p class="wall-message">{{ post.message }}</p>
+                    <div class="wall-meta">
+                        <span class="wall-author">{{ post.author_name or "Anonymous" }}</span>
+                        <button class="pray-button" data-id="{{ post.id }}">
+                            🙏 <span class="prayer-count">{{ post.prayer_count }}</span>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+    </main>
+
+    {% include "partials/footer.html" %}
+    <script src="{{ url_for('static', filename='js/wall.js') }}"></script>
+
+</body>
+</html>
