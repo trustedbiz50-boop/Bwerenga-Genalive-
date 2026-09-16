@@ -352,9 +352,7 @@ tr:hover td {
   color: var(--maroon);
   margin: 4px 0 16px;
 }
-.celebrate-card p:first-of-type::before {
-  content: "🎂 ";
-}
+.celebrate-card p:first-of-type::before 
 
 /* Second <p> is the prayer/well-wishes message — warmer, quote-like
    treatment so it reads as a heartfelt line rather than plain body text */
@@ -374,9 +372,7 @@ tr:hover td {
   padding: 12px 28px;
   box-shadow: 0 4px 10px rgba(133, 148, 12, 0.35);
 }
-.celebrate-card .button::before {
-  content: "🏠 ";
-}
+.celebrate-card .button::before 
 
 .celebrate-card .button:hover {
   transform: translateY(-2px) scale(1.04);
