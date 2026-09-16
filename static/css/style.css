@@ -458,3 +458,126 @@ a {
 a:hover {
   color: var(--orange);
 }
+
+/* ---------------------------------------------------------
+   HOME PAGE — NEXT EVENT BANNER
+   --------------------------------------------------------- */
+.next-event {
+  background: linear-gradient(135deg, var(--green-dark), #6d7a09);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 28px;
+}
+.next-event-label {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px;
+}
+.next-event h2 {
+  color: #fff;
+  font-family: 'Baloo 2', -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 1.3rem;
+  margin: 0 0 4px;
+}
+.next-event-time, .next-event-location {
+  color: rgba(255,255,255,0.9);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------
+   HOME PAGE — CELEBRATING THIS MONTH
+   --------------------------------------------------------- */
+.home-page .celebrating h2,
+.wall-header h2 {
+  font-family: 'Baloo 2', -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 1.15rem;
+  color: var(--green-dark);
+  margin-bottom: 12px;
+}
+.celebrating-list {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+.celebrating-item {
+  flex: 0 0 auto;
+  width: 72px;
+  text-align: center;
+}
+.celebrating-item img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--green-light);
+  display: block;
+  margin: 0 auto 6px;
+}
+.celebrating-item p {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.celebrating-item span {
+  font-size: 0.7rem;
+  color: var(--orange);
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------
+   HOME PAGE — PRAYER WALL
+   --------------------------------------------------------- */
+.wall { margin-top: 32px; }
+.wall-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.wall-form textarea,
+.wall-form input[type="text"] {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+.wall-form textarea { resize: vertical; min-height: 60px; }
+.wall-form textarea:focus,
+.wall-form input:focus {
+  outline: none;
+  border-color: var(--green-dark);
+}
+.wall-list { display: flex; flex-direction: column; gap: 12px; }
+.wall-post {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border-left: 3px solid var(--orange);
+}
+.wall-message { margin: 0 0 8px; font-size: 0.95rem; line-height: 1.5; }
+.wall-meta { display: flex; justify-content: space-between; align-items: center; }
+.wall-author { font-size: 0.8rem; color: var(--text-light); font-weight: 600; }
+.pray-button {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--maroon);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.pray-button:hover { background: #faf6e8; }
+.pray-button:active { transform: scale(0.95); }
