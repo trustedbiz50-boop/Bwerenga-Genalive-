@@ -40,6 +40,7 @@ def home():
 def register():
     full_name = request.form["full_name"]
     phone_number = request.form["phone_number"]
+    location = request.form["location"]
     birthday = request.form["birthday"]
     share_birthday = "share_birthday" in request.form
 
@@ -61,11 +62,24 @@ def register():
 
     try:
         # === CHANGED: added photo_url as 5th argument ===
-        save_member(full_name, phone_number, birthday, share_birthday, photo_url)
+        save_member(full_name, phone_number, location, birthday, share_birthday, photo_url)
     except sqlite3.IntegrityError:
         return "This phone number is already registered."
     
     return render_template("success.html", full_name=full_name)    
+
+#Load life.html and then call any of the load funnctions(loop)
+@app.route("/life")
+def life():
+    members_this_month = load_members_this_month()
+    next_event = load_next_event()
+    wall_posts = load_wall_posts()
+    return render_template(
+        "life.html",
+        members=members_this_month,
+        next_event=next_event,
+        wall_posts=wall_posts
+        )
 
 @app.route("/success")
 def success():
@@ -81,6 +95,33 @@ def celebrate(id):
     person = get_member(id)
     return render_template("celebrate.html", person=person)
 
+#A mini API endpoint that hands frontend 3 prayer wall posts 
+
+from flask import jsonify
+@app.route("/api/wall-feed")
+def wall_feed():
+    offset = int(request.args.get("offset", 0))
+    posts = load_wall_posts(limit=3, offset=offset)
+    return jsonify(posts)
+
+# Prayer Wall API . Feeds the scrolling wall + prayer counter
+@app.route("/api/wall/<int:post_id>/pray", methods=["POST"])
+
+def pray_for_post(post_id):
+    add_prayer(post_id)
+    return jsonify({"status": "ok"})
+
+@app.route("/api/wall/new", methods=["POST"])
+def wall_new():
+    data = request.get_json()
+    message = data.get("message", "").strip()
+    author_name = data.get("author_name", "").strip() or None
+    if not message:
+        return jsonify({"error": "message required"}), 400
+        save_wall_post(message, author_name)
+        newest = load_wall_posts(limit=1, offset=0)
+        return jsonify(newest[0])
+
 #SQlite Database#--------------------------
 import sqlite3
 
@@ -93,6 +134,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             full_name TEXT NOT NULL UNIQUE,
             phone_number TEXT NOT NULL,
+            location TEXT NOT NULL,
             birthday TEXT NOT NULL,
             share_birthday INTEGER NOT NULL,
             photo TEXT
@@ -106,11 +148,11 @@ def init_db():
     conn.commit()
     conn.close()
 
-def save_member(full_name, phone_number, birthday, share_birthday, photo=None):
+def save_member(full_name, phone_number, location, birthday, share_birthday, photo=None):
     # === CHANGED: added photo=None parameter above, and photo column below ===
     conn = sqlite3.connect(DB_FILE)
     conn.execute(
-        "INSERT INTO members (full_name, phone_number, birthday, share_birthday, photo) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO members (full_name, phone_number, location, birthday, share_birthday, photo) VALUES (?, ?, ?, ?, ?)",
         (full_name, phone_number, birthday, int(share_birthday), photo)
     )
     conn.commit()
@@ -130,8 +172,8 @@ def get_member(member_id):
     conn.close()
     return dict(row) if row else None
 
-init_db() #rubs on import, so gunicorn triggers it too
 if __name__ == "__main__":
+    init_db()
     # === CHANGED: was app.run(debug=True) — unsafe and unreachable on Render ===
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
