@@ -201,23 +201,35 @@ def get_member(member_id):
 
 def load_members_this_month():
     """Members whose birthday falls in the current calendar month,
-    ordered so the earliest day comes first. share_birthday must be
-    on and we need a photo to show a circle for them."""
+    ordered so the earliest day comes first. Only share_birthday=1
+    is required now — members without a photo still show up, using
+    initials instead (handled in the template)."""
     conn = sqlite3.connect(DB_FILE)
     conn.row_factory = sqlite3.Row
-    current_month = datetime.now().strftime("%m")  # e.g. "09"
+    now = datetime.now()
+    current_month = now.strftime("%m")
     rows = conn.execute(
         """
         SELECT * FROM members
         WHERE share_birthday = 1
-          AND photo IS NOT NULL
           AND strftime('%m', birthday) = ?
         ORDER BY strftime('%d', birthday)
         """,
         (current_month,)
     ).fetchall()
     conn.close()
-    return [dict(row) for row in rows]
+
+    members = []
+    for row in rows:
+        member = dict(row)
+        # birthday is stored as the person's actual birth date (e.g. 1998-09-21).
+        # We need THIS year's weekday for that month/day, not the birth year's.
+        born = datetime.strptime(member["birthday"], "%Y-%m-%d")
+        this_year = born.replace(year=now.year)
+        member["bday_day"] = this_year.strftime("%d").lstrip("0")
+        member["bday_weekday"] = this_year.strftime("%a")  # e.g. "Mon"
+        members.append(member)
+    return members
 
 def save_event(title, event_date, event_time=None, location=None, poster=None):
     conn = sqlite3.connect(DB_FILE)
