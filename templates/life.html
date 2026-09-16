@@ -3,10 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home . GenAlive Bwerenga Campus Connect</title>
+    <title>Home — GenAlive Bwerenga Campus Connect</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+
+    <header class="app-header">
+        <h1>Genalive</h1>
+        <button id="menu-button" class="menu-button" aria-label="Menu">&#9776;</button>
+    </header>
 
     <main class="page life-page">
 
@@ -22,28 +27,35 @@
         {% endif %}
 
         <section class="celebrating">
-            <h2>Celebrating this month</h2>
+            <div class="section-header">
+                <h2>Celebrating this month</h2>
+                <a href="/dashboard" class="see-all">See all</a>
+            </div>
             <div class="celebrating-list">
                 {% for member in members %}
                 <div class="celebrating-item">
-                    <img src="{{ member.photo }}" alt="{{ member.full_name }}">
+                    {% if member.photo %}
+                        <img src="{{ member.photo }}" alt="{{ member.full_name }}">
+                    {% else %}
+                        <div class="celebrating-initials">
+                            {{ (member.full_name.split()[0][0] + member.full_name.split()[-1][0])|upper }}
+                        </div>
+                    {% endif %}
                     <p>{{ member.full_name }}</p>
-                    <span>{{ member.birthday[8:10] }}</span>
+                    <span class="celebrating-date">
+                        <span class="celebrating-weekday">{{ member.bday_weekday }}</span>
+                        <span class="celebrating-day">{{ member.bday_day }}</span>
+                    </span>
                 </div>
                 {% endfor %}
             </div>
         </section>
 
         <section class="wall">
-            <div class="wall-header">
+            <div class="section-header">
                 <h2>Wall</h2>
+                <button id="open-post" class="see-all" type="button">Post</button>
             </div>
-
-            <form id="wall-form" class="wall-form">
-                <textarea name="message" placeholder="Share a prayer request or a thought..." required></textarea>
-                <input type="text" name="author_name" placeholder="Your name (optional)">
-                <button type="submit">Post</button>
-            </form>
 
             <div id="wall-list" class="wall-list">
                 {% for post in wall_posts %}
@@ -61,6 +73,21 @@
         </section>
 
     </main>
+
+    <!-- Post popup — hidden until "Post" is tapped -->
+    <div id="post-overlay" class="post-overlay hidden">
+        <div class="post-popup">
+            <div class="post-popup-header">
+                <h3>Share on the Wall</h3>
+                <button id="close-post" class="close-post" type="button" aria-label="Close">&times;</button>
+            </div>
+            <form id="wall-form" class="wall-form">
+                <textarea name="message" placeholder="Share a prayer request or a thought..." required></textarea>
+                <input type="text" name="author_name" placeholder="Your name (optional)">
+                <button type="submit">Post</button>
+            </form>
+        </div>
+    </div>
 
     {% include "partials/footer.html" %}
     <script src="{{ url_for('static', filename='js/wall.js') }}"></script>
